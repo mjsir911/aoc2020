@@ -1,0 +1,19 @@
+# a tuple of groups composed of tuple of passengers composed of set of answers
+
+input = (({a, b, c}), ({a}, {b}, {c}), ({a, b}, {a, c}), ({a}, {a}, {a}, {a}), ({b}))
+
+# I want to turn this into ({a, b, c}, {a, b, c}, {a, b, c}, {a}, {b})
+# but (3, 3, 3, 1, 1) is even better
+
+# think of x as 0 or more numbers (that exist in set s)
+sum = {(s, ∑ x) : x ∈ s}
+
+⋃ = { (expr, result) : x ∈ expr, x ∈ result } # union
+
+part1 = sum((|{⋃ person : person ∈ group}| : group ∈ input))
+
+# I want to turn input into ({a, b,c}, {}, {a}, {a}, {b})
+
+⋂ = { (expr, result) : ∀ x ∈ expr, x ∈ result } # intersection
+
+part2 = sum((|{⋂ person : person ∈ group}| : group ∈ input))
