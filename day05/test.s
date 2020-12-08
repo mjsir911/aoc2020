@@ -7,23 +7,25 @@
 .globl _start
 
 _start:
-	mov $READ, %eax
-	mov $STDIN, %edi
-	mov %rsp, %rsi # rsp is scratchpad / stack
-	mov $700, %edx
-	syscall
 	# https://www.officedaytime.com/simd512e/ is a very useful resource if the
 	# instructions apply to me
 	# not many byte level instructions 
 	# perhaps interleave the two ids in each word would work
 
-	mov %rsp, %rdi # %rdi is where I'm appending translated nums
-	mov $50, %rcx # rcx is number if loops
-
 	vpcmpeqd        %ymm15, %ymm15, %ymm15 # a bunch o' ones
+
+	mov $STDIN, %edi
+	mov $33, %edx
+	mov %rsp, %rsi # rsp is scratchpad / stack
 loop:
-	vpxor (%rsp), %ymm15, %ymm0 # this is a mov with a negation built in
-	add $33, %rsp
+	mov $READ, %eax
+	syscall
+
+	cmp $0, %rax
+	je exit
+
+	vpxor (%rsi), %ymm15, %ymm0 # this is a mov with a negation built in
+	# add $33, %rsp
 	# vmovdqa (%rsp), %ymm0
 
 	# XOR the stack with FBLRMask repeated over and over again
@@ -49,21 +51,23 @@ loop:
 	# also remove newlines and pad out correctly
 	vpshufb endianShuf, %ymm0, %ymm0
 
+
 	# PMOVMSKB to extract 32 bytes to register
-	vpmovmskb %ymm0, %rax
-	stosl # adds %rax and increments counter by two
+	vpmovmskb %ymm0, %r9
+	mov %r9, (%rsi)
 
 	# also deal with line 3 on lower qword of %ymm0
 	# do the same for the third line in %xmm0
 	psrldq $1, %xmm1
 	pshufb endianShuf, %xmm1
-	pmovmskb %xmm1, %rax
-	stosw
+	pmovmskb %xmm1, %r10
+	mov %r10, 4(%rsi)
 
-  loopnz loop
+	add $6, %rsi
 
+	jmp loop
 
-	// exit
+exit:
 	mov $SYS_EXIT, %eax
 	mov $-1, %rdi
 	syscall
