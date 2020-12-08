@@ -8,6 +8,9 @@ numlist = [int(line) for line in fileinput.input()]
 
 
 def part2(l):
+    """
+    This doesn't actually work, just works for mine and the test input
+    """
     l = sorted(l)
     while l:
         if l[0] + l[-1] + l[-2] == 2020:
