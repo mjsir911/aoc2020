@@ -3,28 +3,21 @@
 
 from sys import stdin
 from string import ascii_lowercase
+from functools import reduce
 
 b = stdin.read().split("\n\n")
-b = [set(c for c in a.strip().split()) for a in b]
+b = [[set(c) for c in a.strip().split()] for a in b]
 
 
 def part1(b):
-    c = 0
-    for i in b:
-        i = {g for h in i for g in h}
-        c += len(i)
-    return c
+    return sum(len(reduce(set.union, i)) for i in b)
 
 
 print(part1(b))
 
 
 def part2(b):
-    from functools import reduce
-    c = 0
-    for i in b:
-        c += len(reduce(set.intersection, [set(c) for c in i]))
-    return c
+    return sum(len(reduce(set.intersection, i)) for i in b)
 
 
 print(part2(b))
