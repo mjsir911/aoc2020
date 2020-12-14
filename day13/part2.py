@@ -44,29 +44,36 @@ def brute(d, inc=1):
 # print('answer:', brute(d(c), inc=13))
 
 
-diff = 1
-i = 0
-base = None
-precision = 1
-while True:
-    if test(i, d(c[:precision])):
-        if base is None:
-            base = i
-            print(f'base is: {base}, diff is {diff}')
-            if test(i, d(c)):
-              break
-        else:
-            # print(f'next is {i}')
-            diff = (i - base)
-            precision += 1
-            base = None
-            continue
+def chinese_remainder(equals, mods):
+    diff = 1
+    i = 0
+    base = None
+    precision = 0
+    # p =
+    def test(n, equals, mods):
+        return all(n % m == e for e, m in zip(equals, mods))
 
-    i += diff
+    while True:
+        if i % mods[precision] == equals[precision]:
+            if base is None:
+                base = i
+                if test(i, equals, mods):
+                    break
+                # print(f'base is {base}')
+                if precision == len(c):
+                    break
+            else:
+                diff = (i - base)
+                # print(f'next is {i}, diff is {diff}')
+                precision += 1
+                base = None
 
-    # print(i)
+        i += diff
 
-print(base)
+        # print(i)
+
+    return base
+
 
 from itertools import count
 from math import sqrt
@@ -76,7 +83,16 @@ from math import sqrt
 #         print(i)
 
 # this is for printing into wolfram alpha
-# for a, b in d(c).items():
-#     print(f'((n + {b}) mod {a}) and ', end='')
+z = []
+y = []
+for a, b in d(c).items():
+    z.append(a)
+    y.append((a - b) % a)
+    # print(f'{', end='')
+
+print(chinese_remainder(y, z))
+assert chinese_remainder(y, z) == 1068781
+# print(str(y) + ',', z)
+# print(chinese_remainder([2, 3, 2], [3, 5, 7]))
 # print()
 # print(d(c))
