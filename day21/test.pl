@@ -42,15 +42,13 @@ menuline([bmlfmj, ngjqpc, hzllnq, xcj, mgb, mxpj, cvbsp, jpthp, hgp, jdqq, xzcq,
 menuline([gcqpb, dzps, vndrb, bjdqnts, xcj, bvcrrfbr, xpnf, qvbrx, lfxnbq, nlxn, mdttst, hkk, hphzkcf, nzcr, xcgtv, ggfr, xmncxv, bcdgf, jdqq, mrztqsk, fscs, tj, blslf, dch, tcxcg, dqvct, dhz, dhbxtb, xzcq, dblzkk, qrqc, dtkn, rcn, gnt, mrtxr, xhrdsl, zrmnnk, kflqxq, nfbx, lbnmsr, cvbsp, zpnnqqtf, shjl, dphrq, rchkc, tkcs, krmgj], [dairy]).
 
 
-contains(F, A) :- food2(F), forall((menuline(Fs, As), member(A, As)), member(F, Fs)).
-
 food(F):- menuline(L, _), member(F, L).
-food2(F) :- setof(A, food(A), B), member(F, B).
-% ugh I want a unique
 allergen(A):- menuline(_, L), member(A, L).
 
-marco([], []).
-marco([H|T], [F|L]):- contains(F, H), marco(T, L), is_set([F|L]).
-marco2(C) :- setof(A, allergen(A), As), setof(B, marco(As, B), [C]).
+contains(F, A) :- distinct(food(F)), forall((menuline(Fs, As), member(A, As)), member(F, Fs)).
 
-% contains(F, dairy) should only return union of all menulines that contain
+menumap([], []).
+menumap([A|As], [F|Fs]) :- contains(F, A), menumap(As, Fs), \+ member(F, Fs).
+badfoods(Fs) :- setof(A, allergen(A), As), menumap(As, Fs).
+
+% bagof(F, (once(badfoods(AllergenDishes)), food(F), \+ member(F, AllergenDishes)), NonAllergenDishes), length(NonAllergenDishes, NumNonAllergens)
