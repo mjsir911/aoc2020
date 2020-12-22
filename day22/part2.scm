@@ -11,16 +11,18 @@
 
 (define (fight deck)
 	; (println (object->string deck))
-	(let [(player1 (car deck))
-	      (player2 (cadr deck))]
+	(let [(player1 (cdar deck))
+	      (draw1 (caar deck))
+	      (player2 (cdadr deck))
+	      (draw2 (caadr deck))]
 		(if
-			(if (and (> (length player1) (car player1)) (> (length player2) (car player2)))
+			(if (and (>= (length player1) draw1) (>= (length player2) draw2))
 				(null? (car (game (list 
-					(take (cdr player1) (car player1))
-					(take (cdr player2) (car player2))))))
-				(< (car player1) (car player2)))
-			(list (cdr player1) (append (cdr player2) (list (car player2) (car player1))))
-			(list (append (cdr player1) (list (car player1) (car player2))) (cdr player2)))))
+					(take player1 draw1)
+					(take player2 draw2)))))
+				(< draw1 draw2))
+			(list player1 (append player2 (list draw2 draw1)))
+			(list (append player1 (list draw1 draw2)) player2))))
 
 (define (game deck #!optional (seen (make-table)))
 	(if (or (null? (car deck)) (null? (cadr deck)) (table-ref seen deck #f))
