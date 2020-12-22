@@ -25,13 +25,15 @@
 			(list (append player1 (list draw1 draw2)) player2))))
 
 (define (game deck #!optional (seen (make-table)))
-	(if (or (null? (car deck)) (null? (cadr deck)) (table-ref seen deck #f))
-		deck
-		(game (fight deck) (begin (table-set! seen deck #t) seen))))
+	(let [(player1 (car deck)) (player2 (cadr deck))]
+		(if (or (null? player1) (null? player2) (table-ref seen deck #f))
+			deck
+			(game (fight deck) (begin (table-set! seen deck #t) seen)))))
 
 
 (define (winner deck)
-		(if (null? (car deck)) (cadr deck) (car deck)))
+	(let [(player1 (car deck)) (player2 (cadr deck))]
+		(if (null? player1) player2 player1)))
 
 (define (score deck #!optional (index 1))
 	(if (null? deck)
