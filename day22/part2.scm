@@ -18,12 +18,13 @@
 	      (draw2 (caadr deck))]
 		(if
 			(if (and (>= (length player1) draw1) (>= (length player2) draw2))
-				(null? (car (game (list 
+				(null? (car (game (list
 					(take player1 draw1)
 					(take player2 draw2)))))
 				(< draw1 draw2))
 			(list player1 (append player2 (list draw2 draw1)))
 			(list (append player1 (list draw1 draw2)) player2))))
+
 
 (define (game deck #!optional (seen (make-table)))
 	(let [(player1 (car deck)) (player2 (cadr deck))]
