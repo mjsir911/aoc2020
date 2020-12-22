@@ -1,28 +1,8 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 
-from copy import deepcopy
-
-a = """
-Player 1:
-9
-2
-6
-3
-1
-
-Player 2:
-5
-8
-4
-7
-10
-"""
-
-a = open('my.in').read()
-
-
-a = a.strip().split('\n\n')
+from sys import stdin
+a = stdin.read().strip().split('\n\n')
 
 a = {b.split('\n')[0][:-1]: [int(c) for c in b.split('\n')[1:]] for b in a}
 
