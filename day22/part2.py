@@ -43,7 +43,6 @@ def fight(b):
     b[winner].append(d[loser])
     # print(winner, 'wins the round!')
     # print()
-    return b
 
 
 def game_to_hashable(b):
