@@ -1,3 +1,4 @@
+#!/usr/bin/env gsi
 (define (parse-deck)
 	(read-line) ; no-op
 	(let read-until-empty ()
