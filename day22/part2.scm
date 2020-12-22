@@ -27,10 +27,10 @@
 
 
 (define (game deck #!optional (seen (make-table)))
-	(let [(player1 (car deck)) (player2 (cadr deck))]
-		(if (or (null? player1) (null? player2) (table-ref seen deck #f))
+	(let* [(player1 (car deck)) (player2 (cadr deck)) (hash player1)]
+		(if (or (null? player1) (null? player2) (table-ref seen hash #f))
 			deck
-			(game (fight deck) (begin (table-set! seen deck #t) seen)))))
+			(game (fight deck) (begin (table-set! seen hash #t) seen)))))
 
 
 (define (winner deck)
