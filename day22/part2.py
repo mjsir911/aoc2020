@@ -40,7 +40,7 @@ def game_to_hashable(b):
 def game(b):
     seen = set()
     # print('=== Game ===')
-    while all(b.values()):
+    while b['Player 1'] and b['Player 2']:
         c = game_to_hashable(b)
         if c in seen:
             return 'Player 1'
