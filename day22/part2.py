@@ -41,9 +41,10 @@ def game(b):
     seen = set()
     # print('=== Game ===')
     while all(b.values()):
-        if game_to_hashable(b) in seen:
+        c = game_to_hashable(b)
+        if c in seen:
             return 'Player 1'
-        seen.add(game_to_hashable(b))
+        seen.add(c)
         fight(b)
 
     winner = 'Player 1' if b['Player 1'] else 'Player 2'
