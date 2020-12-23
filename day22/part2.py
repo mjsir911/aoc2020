@@ -36,7 +36,7 @@ def fight(b):
 
 
 def game_to_hashable(b):
-    return (tuple(b[0]), tuple(b[1]))
+    return tuple(b[0])
 
 
 def game(b):
