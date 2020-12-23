@@ -2,26 +2,16 @@
 # vim: set fileencoding=utf-8 :
 
 from sys import stdin
-from collections import deque
-from itertools import islice
 a = stdin.read().strip().split('\n\n')
 
 
-class deque(deque):
-    def __getitem__(self, index):
-        """
-        https://stackoverflow.com/a/10003201/6381767
-        """
-        try:
-            return super().__getitem__(self, index)
-        except TypeError:
-            return type(self)(islice(self, index.start,
-                                               index.stop, index.step))
+# class list(list): pass
 
-a = {b.split('\n')[0][:-1]: deque(int(c) for c in b.split('\n')[1:]) for b in a}
+a = {b.split('\n')[0][:-1]: list(int(c) for c in b.split('\n')[1:]) for b in a}
+
 
 def draw(b):
-    return {p: c.popleft() for p, c in b.items()}
+    return {p: c.pop(0) for p, c in b.items()}
 
 
 def fight(b):
@@ -30,8 +20,8 @@ def fight(b):
     d = draw(b)
     if len(b['Player 1']) >= d['Player 1'] and len(b['Player 2']) >= d['Player 2']:
         winner = game({
-            'Player 1': deque(b['Player 1'][:d['Player 1']]),
-            'Player 2': deque(b['Player 2'][:d['Player 2']]),
+            'Player 1': list(b['Player 1'][:d['Player 1']]),
+            'Player 2': list(b['Player 2'][:d['Player 2']]),
         })
         # winner = game(deepcopy(b))
     else:
