@@ -1,25 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct cup {
-	struct cup *next;
-	int data;
-} cup;
+typedef void* cup;
 
 #define NCUPS 1000000
 
 #define lenof(a) sizeof(a) / sizeof(a[0])
 
-#define next(c) (c->next)
-#define label(c) (c->data)
+#define label(p) (long)(p - cups + 1)
+#define next(p) (*(cup **)p)
 
 int main(int argc, char *argv[]) {
 	int input[] = {5, 6, 2, 8, 9, 3, 1, 4, 7};
 	static cup cups[NCUPS];
 	#define rinput(i) ((i) < lenof(input) ? input[i] - 1 : i)
 	for (int i = 0; i < NCUPS; i++) {
-			cups[rinput(i)] = (cup) { .data = rinput(i) + 1
-			                                , .next = cups + rinput((i + 1) % NCUPS) };
+			cups[rinput(i)] = cups + rinput((i + 1) % NCUPS);
 	}
 
 	cup *cur = &cups[input[0] - 1];
