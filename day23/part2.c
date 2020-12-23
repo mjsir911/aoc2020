@@ -22,17 +22,17 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < 10000000; i++) {
 		cup *moved[3] = {next(cur), next(moved[0]), next(moved[1])};
 
-		int dest = label(cur);
-		#define WRAP(n) (((n) - 1 + NCUPS) % NCUPS + 1)
+		int dest = cur - cups;
+		#define WRAP(n) (((n) + NCUPS) % NCUPS)
 		do {
 			dest = WRAP(dest - 1);
 		} while (
-				 dest == label(moved[0])
-			|| dest == label(moved[1])
-			|| dest == label(moved[2])
+			   &cups[dest] == moved[0]
+			|| &cups[dest] == moved[1]
+			|| &cups[dest] == moved[2]
 		);
 		// printf("dest: %i\n", dest);
-		cup *dest_p = &cups[dest - 1];
+		cup *dest_p = &cups[dest];
 
 		// do the moves
 		next(cur) = next(moved[2]);
