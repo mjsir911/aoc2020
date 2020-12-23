@@ -15,31 +15,30 @@ int main(int argc, char *argv[]) {
 	static cup cups[NCUPS];
 	#define rinput(i) ((i) < lenof(input) ? input[i] - 1 : i)
 	for (int i = 0; i < NCUPS; i++) {
-			cups[rinput(i)] = cups + rinput((i + 1) % NCUPS);
+		cups[rinput(i)] = &cups[rinput((i + 1) % NCUPS)];
 	}
 
 	cup *cur = &cups[input[0] - 1];
 	for (int i = 0; i < 10000000; i++) {
-		int current = label(cur);
-		cup *removed = next(cur); // three long
-		next(cur) = next(next(next(removed)));
-		cur = next(cur);
+		cup *moved[3] = {next(cur), next(moved[0]), next(moved[1])};
 
-		int dest = current;
+		int dest = label(cur);
 		#define WRAP(n) (((n) - 1 + NCUPS) % NCUPS + 1)
 		do {
 			dest = WRAP(dest - 1);
 		} while (
-				 dest == label(removed)
-			|| dest == label(next(removed))
-			|| dest == label(next(next(removed)))
+				 dest == label(moved[0])
+			|| dest == label(moved[1])
+			|| dest == label(moved[2])
 		);
 		// printf("dest: %i\n", dest);
 		cup *dest_p = &cups[dest - 1];
 
-		// do the move
-		next(next(next(removed))) = next(dest_p);
-		next(dest_p) = removed;
+		// do the moves
+		next(cur) = next(moved[2]);
+		next(moved[2]) = next(dest_p);
+		next(dest_p) = moved[0];
+		cur = next(cur);
 	}
 	printf("%li\n", (long int) label(next(cups)) * label(next(next(cups))));
 }
