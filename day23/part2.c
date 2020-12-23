@@ -38,16 +38,6 @@ circ_list new_circ_list(vals, len)
 	return r;
 }
 
-void print_circ_list(circ_list cups) {
-	struct link *next = cups.list;
-	printf("{");
-	for (int i = 0; i < cups.size; i++) {
-		printf("%i, ", next->data);
-		next = next->next;
-	}
-	printf("}\n");
-}
-
 int modulo(int x,int N){
     return (x % N + N) %N;
 }
