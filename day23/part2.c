@@ -6,11 +6,6 @@ struct link {
 	int data;
 };
 
-int modulo(int x,int N){
-    return (x % N + N) %N;
-}
-
-
 #define NCUPS 1000000
 
 #define lenof(a) sizeof(a) / sizeof(a[0])
@@ -34,11 +29,9 @@ int main(int argc, char *argv[]) {
 		cur = cur->next;
 
 		int dest = current;
+		#define WRAP(n) (((n) - 1 + NCUPS) % NCUPS + 1)
 		do {
-			dest = modulo(dest - 1, NCUPS + 1);
-			if (dest == 0) {
-				dest = modulo(dest - 1, NCUPS + 1);
-			}
+			dest = WRAP(dest - 1);
 		} while (
 				 dest == removed->data
 			|| dest == removed->next->data
