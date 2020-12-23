@@ -6,65 +6,38 @@ struct link {
 	int data;
 };
 
-typedef struct {
-	size_t size;
-	struct link *list;
-	struct link **lookup; // this is a big array of lookup[data] -> link
-} circ_list;
-
-circ_list new_circ_list(vals, len)
-	size_t len;
-	int vals[len];
-{
-	circ_list r = {
-		.size = len,
-		.list=malloc(sizeof(struct link)),
-		.lookup=calloc(r.size + 1, sizeof(struct link*))
-	};
-	struct link *head = r.list;
-
-	head->data = vals[0];
-	r.lookup[vals[0]] = head;
-	struct link *prev = head;
-	for (int i = 1; i < len; i++) {
-		struct link *node = malloc(sizeof(struct link));
-		node->data = vals[i];
-		r.lookup[vals[i]] = node;
-		prev->next = node;
-		prev = node;
-	}
-	prev->next = head;
-
-	return r;
-}
-
 int modulo(int x,int N){
     return (x % N + N) %N;
 }
 
+
+#define NCUPS 1000000
+
 #define lenof(a) sizeof(a) / sizeof(a[0])
 int main(int argc, char *argv[]) {
-	int input[1000000] = {5, 6, 2, 8, 9, 3, 1, 4, 7};
-	for (int i=9; i < 1000000; i++) {
-		input[i] = i + 1;
+	int input[] = {5, 6, 2, 8, 9, 3, 1, 4, 7};
+	static struct link cups[NCUPS];
+	#define rinput(i) ((i) < lenof(input) ? input[i] - 1 : i)
+	for (int i = 0; i < NCUPS; i++) {
+			cups[rinput(i)] = (struct link) { .data = rinput(i) + 1
+			                                , .next = cups + rinput((i + 1) % NCUPS) };
 	}
-	circ_list list = new_circ_list(input, lenof(input));
-	circ_list *cups = &list;
 
+	struct link *cur = &cups[input[0] - 1];
 	for (int i = 0; i < 10000000; i++) {
-		int current = cups->list->data;
+		int current = cur->data;
 		// printf("cups: "); print_circ_list(*cups);
 		// printf("current: %i\n", current);
-		struct link *removed = cups->list->next; // three long
+		struct link *removed = cur->next; // three long
 		// printf("pick up: %i, %i, %i\n", removed->data, removed->next->data, removed->next->next->data);
-		cups->list->next = removed->next->next->next;
-		cups->list = cups->list->next;
+		cur->next = removed->next->next->next;
+		cur = cur->next;
 
 		int dest = current;
 		do {
-			dest = modulo(dest - 1, cups->size + 1);
+			dest = modulo(dest - 1, NCUPS + 1);
 			if (dest == 0) {
-				dest = modulo(dest - 1, cups->size + 1);
+				dest = modulo(dest - 1, NCUPS + 1);
 			}
 		} while (
 				 dest == removed->data
@@ -72,11 +45,11 @@ int main(int argc, char *argv[]) {
 			|| dest == removed->next->next->data
 		);
 		// printf("dest: %i\n", dest);
-		struct link *dest_p = cups->lookup[dest];
+		struct link *dest_p = &cups[dest - 1];
 
 		// do the move
 		removed->next->next->next = dest_p->next;
 		dest_p->next = removed;
 	}
-	printf("%li\n", (long int) list.lookup[1]->next->data * list.lookup[1]->next->next->data);
+	printf("%li\n", (long int) cups[0].next->data * cups[0].next->next->data);
 }
