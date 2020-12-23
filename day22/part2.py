@@ -7,28 +7,28 @@ a = stdin.read().strip().split('\n\n')
 
 # class list(list): pass
 
-a = {b.split('\n')[0][:-1]: list(int(c) for c in b.split('\n')[1:]) for b in a}
+a = tuple(list(int(c) for c in b.split('\n')[1:]) for b in a)
 
 
 def draw(b):
-    return {p: c.pop(0) for p, c in b.items()}
+    return b[0].pop(0), b[1].pop(0)
 
 
 def fight(b):
     # print('-- Round --')
     # print(b)
     d = draw(b)
-    if len(b['Player 1']) >= d['Player 1'] and len(b['Player 2']) >= d['Player 2']:
-        winner = game({
-            'Player 1': list(b['Player 1'][:d['Player 1']]),
-            'Player 2': list(b['Player 2'][:d['Player 2']]),
-        })
+    if len(b[0]) >= d[0] and len(b[1]) >= d[1]:
+        winner = game((
+            list(b[0][:d[0]]),
+            list(b[1][:d[1]]),
+        ))
         # winner = game(deepcopy(b))
     else:
-        winner = 'Player 1' if d['Player 1'] > d['Player 2'] else 'Player 2'
+        winner = 0 if d[0] > d[1] else 1
     # print(f'winner: {winner}')
     # winner = max(draw, key=lambda p: draw[p])
-    loser = 'Player 2' if winner == 'Player 1' else 'Player 1'
+    loser = 1 if winner == 0 else 0
     b[winner].append(d[winner])
     b[winner].append(d[loser])
     # print(winner, 'wins the round!')
@@ -36,24 +36,23 @@ def fight(b):
 
 
 def game_to_hashable(b):
-    return (tuple(b['Player 1']), tuple(b['Player 2']))
+    return (tuple(b[0]), tuple(b[1]))
 
 
 def game(b):
     seen = set()
     # print('=== Game ===')
-    while b['Player 1'] and b['Player 2']:
+    while b[0] and b[1]:
         c = game_to_hashable(b)
         if c in seen:
-            return 'Player 1'
+            return 0
         seen.add(c)
         fight(b)
 
-    winner = 'Player 1' if b['Player 1'] else 'Player 2'
+    winner = 0 if b[0] else 1
     return winner
 
 from itertools import count
-# winner = a['Player 1'] or a['Player 2']
 winner = a[game(a)]
 print(a)
 print(sum(c * d for c, d in zip(reversed(winner), count(start=1))))
