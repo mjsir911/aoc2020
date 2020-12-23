@@ -1,48 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct link {
-	struct link *next;
+typedef struct cup {
+	struct cup *next;
 	int data;
-};
+} cup;
 
 #define NCUPS 1000000
 
 #define lenof(a) sizeof(a) / sizeof(a[0])
+
+#define next(c) (c->next)
+#define label(c) (c->data)
+
 int main(int argc, char *argv[]) {
 	int input[] = {5, 6, 2, 8, 9, 3, 1, 4, 7};
-	static struct link cups[NCUPS];
+	static cup cups[NCUPS];
 	#define rinput(i) ((i) < lenof(input) ? input[i] - 1 : i)
 	for (int i = 0; i < NCUPS; i++) {
-			cups[rinput(i)] = (struct link) { .data = rinput(i) + 1
+			cups[rinput(i)] = (cup) { .data = rinput(i) + 1
 			                                , .next = cups + rinput((i + 1) % NCUPS) };
 	}
 
-	struct link *cur = &cups[input[0] - 1];
+	cup *cur = &cups[input[0] - 1];
 	for (int i = 0; i < 10000000; i++) {
-		int current = cur->data;
-		// printf("cups: "); print_circ_list(*cups);
-		// printf("current: %i\n", current);
-		struct link *removed = cur->next; // three long
-		// printf("pick up: %i, %i, %i\n", removed->data, removed->next->data, removed->next->next->data);
-		cur->next = removed->next->next->next;
-		cur = cur->next;
+		int current = label(cur);
+		cup *removed = next(cur); // three long
+		next(cur) = next(next(next(removed)));
+		cur = next(cur);
 
 		int dest = current;
 		#define WRAP(n) (((n) - 1 + NCUPS) % NCUPS + 1)
 		do {
 			dest = WRAP(dest - 1);
 		} while (
-				 dest == removed->data
-			|| dest == removed->next->data
-			|| dest == removed->next->next->data
+				 dest == label(removed)
+			|| dest == label(next(removed))
+			|| dest == label(next(next(removed)))
 		);
 		// printf("dest: %i\n", dest);
-		struct link *dest_p = &cups[dest - 1];
+		cup *dest_p = &cups[dest - 1];
 
 		// do the move
-		removed->next->next->next = dest_p->next;
-		dest_p->next = removed;
+		next(next(next(removed))) = next(dest_p);
+		next(dest_p) = removed;
 	}
-	printf("%li\n", (long int) cups[0].next->data * cups[0].next->next->data);
+	printf("%li\n", (long int) label(next(cups)) * label(next(next(cups))));
 }
