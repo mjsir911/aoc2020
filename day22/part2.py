@@ -4,8 +4,8 @@
 from sys import stdin
 a = stdin.read().strip().split('\n\n')
 
-
 # class list(list): pass
+
 
 a = tuple(list(int(c) for c in b.split('\n')[1:]) for b in a)
 
@@ -44,6 +44,7 @@ def game(b):
     # print('=== Game ===')
     while b[0] and b[1]:
         c = game_to_hashable(b)
+        # c = tuple(b[0])
         if c in seen:
             return 0
         seen.add(c)
